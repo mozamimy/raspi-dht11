@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  builder:
+    build:
+      context: '.'
+    volumes:
+      - './:/workspace'
+      - '/etc/passwd:/etc/passwd:ro'
+      - '/etc/group:/etc/group:ro'
