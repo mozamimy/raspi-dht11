@@ -1,7 +1,7 @@
 const THRESHOLD_0_1: i32 = 250;
 
 pub struct DHT11 {
-    gpio_data_port: u8,
+    pin: rppal::gpio::IoPin,
 }
 
 pub struct Metric {
@@ -18,39 +18,38 @@ pub enum DTH11Error {
 
 impl DHT11 {
     pub fn new(gpio_data_port: u8) -> Self {
-        DHT11 {
-            gpio_data_port: gpio_data_port,
-        }
-    }
-
-    pub fn read(&self) -> Result<Metric, failure::Error> {
-        let mut bits: Vec<u8> = Vec::with_capacity(64);
-
-        let mut pin = rppal::gpio::Gpio::new()
+        let pin = rppal::gpio::Gpio::new()
             .unwrap()
-            .get(self.gpio_data_port)
+            .get(gpio_data_port)
             .unwrap()
             .into_io(rppal::gpio::Mode::Output);
 
+        DHT11 { pin: pin }
+    }
+
+    pub fn read(&mut self) -> Result<Metric, failure::Error> {
+        let mut bits: Vec<u8> = Vec::with_capacity(64);
+
         // handshake (?)
-        pin.set_high();
+        self.pin.set_mode(rppal::gpio::Mode::Output);
+        self.pin.set_high();
         std::thread::sleep(std::time::Duration::from_micros(5));
-        pin.set_low();
+        self.pin.set_low();
         std::thread::sleep(std::time::Duration::from_millis(25));
-        pin.set_high();
-        pin.set_mode(rppal::gpio::Mode::Input);
+        self.pin.set_high();
+        self.pin.set_mode(rppal::gpio::Mode::Input);
         loop {
-            if pin.is_low() {
+            if self.pin.is_low() {
                 break;
             }
         }
         loop {
-            if pin.is_high() {
+            if self.pin.is_high() {
                 break;
             }
         }
         loop {
-            if pin.is_low() {
+            if self.pin.is_low() {
                 break;
             }
         }
@@ -58,13 +57,13 @@ impl DHT11 {
         // read serial data
         for _ in 0..40 {
             loop {
-                if pin.is_high() {
+                if self.pin.is_high() {
                     break;
                 }
             }
 
             let mut counter = 0;
-            while pin.is_high() {
+            while self.pin.is_high() {
                 counter += 1;
             }
             if counter > THRESHOLD_0_1 {

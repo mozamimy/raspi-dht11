@@ -3,7 +3,7 @@ mod dht11;
 const GPIO_DATA: u8 = 2;
 
 fn main() {
-    let dht11 = dht11::DHT11::new(GPIO_DATA);
+    let mut dht11 = dht11::DHT11::new(GPIO_DATA);
     loop {
         match dht11.read() {
             Ok(result) => println!(
