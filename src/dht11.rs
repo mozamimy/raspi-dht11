@@ -1,4 +1,5 @@
 const THRESHOLD_0_1: i32 = 250;
+const THRESHOLD_TIMEOUT: i32 = 2000;
 
 pub struct DHT11 {
     pin: rppal::gpio::IoPin,
@@ -14,6 +15,8 @@ pub struct Metric {
 pub enum DTH11Error {
     #[fail(display = "The expected parity is {}, however it received {}", _0, _1)]
     ParityCheckError(u8, u8),
+    #[fail(display = "timeout")]
+    TimeoutError,
 }
 
 impl DHT11 {
@@ -65,6 +68,9 @@ impl DHT11 {
             let mut counter = 0;
             while self.pin.is_high() {
                 counter += 1;
+                if counter > THRESHOLD_TIMEOUT {
+                    return Err(failure::Error::from(DTH11Error::TimeoutError));
+                }
             }
             if counter > THRESHOLD_0_1 {
                 bits.push(1);
