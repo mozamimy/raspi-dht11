@@ -5,7 +5,7 @@ pub struct DHT11 {
 }
 
 pub struct Metric {
-    pub temperature: String, // :(
+    pub temperature: f64,
     pub humidity: u8,
     pub parity: u8,
 }
@@ -91,7 +91,7 @@ impl DHT11 {
             )))
         } else {
             Ok(Metric {
-                temperature: format!("{}.{}", bytes[2], bytes[3]),
+                temperature: format!("{}.{}", bytes[2], bytes[3]).parse::<f64>().unwrap(), // It's better to use f64::from_bits()
                 humidity: bytes[0],
                 parity: bytes[4],
             })
