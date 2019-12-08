@@ -1,3 +1,5 @@
 /target
 **/*.rs.bk
-/.docker-cargo-registry
+
+/.cargo-registry/*
+!/.cargo-registry/.gitkeep
