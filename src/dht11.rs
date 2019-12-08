@@ -1,5 +1,5 @@
-const THRESHOLD_0_1: i32 = 250;
-const THRESHOLD_TIMEOUT: i32 = 2000;
+const THRESHOLD_0_1: u32 = 250;
+const THRESHOLD_TIMEOUT: u32 = 2000;
 
 pub struct DHT11 {
     pin: rppal::gpio::IoPin,
