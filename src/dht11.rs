@@ -12,7 +12,7 @@ pub struct Metric {
 }
 
 #[derive(failure::Fail, std::fmt::Debug)]
-pub enum DTH11Error {
+pub enum DHT11Error {
     #[fail(display = "The expected parity is {}, however it received {}", _0, _1)]
     ParityCheckError(u8, u8),
     #[fail(display = "timeout")]
@@ -69,7 +69,7 @@ impl DHT11 {
             while self.pin.is_high() {
                 counter += 1;
                 if counter > THRESHOLD_TIMEOUT {
-                    return Err(failure::Error::from(DTH11Error::TimeoutError));
+                    return Err(failure::Error::from(DHT11Error::TimeoutError));
                 }
             }
             if counter > THRESHOLD_0_1 {
@@ -91,7 +91,7 @@ impl DHT11 {
 
         let check = bytes[0] + bytes[1] + bytes[2] + bytes[3];
         if check != bytes[4] {
-            Err(failure::Error::from(DTH11Error::ParityCheckError(
+            Err(failure::Error::from(DHT11Error::ParityCheckError(
                 bytes[4], check,
             )))
         } else {
