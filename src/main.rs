@@ -76,5 +76,13 @@ fn read() {
         bytes.push(byte);
     }
 
+    let check = bytes[0] + bytes[1] + bytes[2] + bytes[3];
+    if check != bytes[4] {
+        panic!(
+            "warn: Failed to check parity. Check: {}, Parity: {}",
+            check, bytes[4]
+        );
+    }
+
     println!("Temp: {}.{}C, Hum: {}%", bytes[2], bytes[3], bytes[0]);
 }
